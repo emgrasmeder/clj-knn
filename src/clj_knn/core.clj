@@ -1,11 +1,12 @@
 (ns clj-knn.core
+  (:require [clojure.set :as set])
   (:gen-class))
 
 (defn hamming-distance
-  [vec1 vec2]
-  (count (filter true? (map
-                         (partial reduce not=)
-                            (map vector (vals (sort vec1)) (vals (sort vec2)))))))
+  [map1 map2]
+  (let [all-keys (set/union (set (keys map1)) (set (keys map2)))
+        is-diff? (map (fn [k] (= (get map1 k) (get map2 k))) all-keys)]
+    (count (filter #(not (true? %)) is-diff?))))
 
 (defn take-k-neighbors
   [k neighbors]

@@ -3,22 +3,23 @@
             [clj-knn.core :as clj-knn]))
 
 (deftest hamming-distance-test
-  (testing "should calculate the euclidean distance of two vectors"
+  (testing "should calculate the hamming distance of two vectors"
     (let [vect1 {:same "a" :different-thing1 "b" :different-thing2 "c"}
           vect2 {:same "a" :different-thing1 "a" :different-thing2 "d"}]
-      (is (= 2 (clj-knn/hamming-distance vect1 vect2))))))
+      (is (= 2 (clj-knn/hamming-distance vect1 vect2)))))
+  (testing "should work on test-vectors with mismatched fields"
+    (let [vect1 {:a 1 :b 2}
+          vect2 {:a 1 :c 2}]
+      (is (= 2 (clj-knn/hamming-distance vect1 vect2)))))
+  (testing "should work on test-vectors with missing fields"
+    (let [vect1 {:aaa 1 :ddd 3}
+          vect2 {:aaa 1 :bbb 2 :ddd 3}]
+      (is (= 1 (clj-knn/hamming-distance vect1 vect2))))))
 
 (deftest take-k-neighbors-test
   (testing "should return k neighbors sorted by score"
     (let [inputs [{:score 1} {:score 12} {:score 123} {:score 1234} {:score 12345}]]
       (is (= [{:score 1} {:score 12}] (clj-knn/take-k-neighbors 2 inputs))))))
-
-(deftest tag-with-distance-test
-  (testing "should return training data vector, tagged with distance from test-vector"
-    (let [test-vector {:same "a" :different-thing1 "b" :different-thing2 "c"}
-          vector-from-training-data {:same "a" :different-thing1 "a" :different-thing2 "d"}]
-      (is (= (assoc vector-from-training-data :distance 2)
-             (clj-knn/tag-with-distance test-vector vector-from-training-data))))))
 
 (def training-data
   [{:id 1111 :feature1 "black" :feature2 "manual" :feature3 "earth" :feature4 "no"}
@@ -31,6 +32,13 @@
    {:id 1117 :feature1 "white" :feature2 "autonomous" :feature3 "wind" :feature4 "no"}
    {:id 1115 :feature1 "green" :feature2 "manual" :feature3 "wind" :feature4 "no"}
    {:id 1120 :feature1 "red" :feature2 "automatic" :feature3 "fire" :feature4 "no"}])
+
+(deftest tag-with-distance-test
+  (testing "should return training data vector, tagged with distance from test-vector"
+    (let [test-vector (first training-data)
+          vector-from-training-data (second training-data)]
+      (is (= (assoc vector-from-training-data :distance 2)
+             (clj-knn/tag-with-distance test-vector vector-from-training-data))))))
 
 (deftest rank-neighbors-test
   (testing "should return training data vectors, tagged with distances from test-vector"
