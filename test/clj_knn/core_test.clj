@@ -46,7 +46,7 @@
       (is (every? #(not (nil? %)) (map :distance (clj-knn/rank-neighbors test-vector training-data))) ))))
 
 (deftest end-to-end-test
-    (testing "should find the match with identical specs, id 1111")
+  (testing "should find the match with identical specs, id 1111"
     (let [test-vector {:id 1111 :feature1 "black" :feature2 "manual" :feature3 "earth" :feature4 "no"}]
-      (is (= (assoc test-vector :distance 0) (first (clj-knn/knn test-vector training-data 1))))))
+      (is (= (assoc test-vector :distance 0) (first (clj-knn/knn test-vector training-data 1)))))))
 
