@@ -47,6 +47,11 @@
 
 (deftest end-to-end-test
   (testing "should find the match with identical specs, id 1111"
-    (let [test-vector {:id 1111 :feature1 "black" :feature2 "manual" :feature3 "earth" :feature4 "no"}]
-      (is (= (assoc test-vector :distance 0) (first (clj-knn/knn test-vector training-data 1)))))))
+    (let [test-vector {:id 1111, :feature1 "black"
+                       :feature2 "manual", :feature3, "earth" :feature4 "no"}]
+      (is (= (assoc test-vector :distance 0) (first (clj-knn/knn test-vector training-data 1))))))
+  (testing "should find the match with identical specs, id 1111"
+    (let [test-vector {:id 1111, :feature1, "black" :feature2 "ONE DIFFERENCE"
+                       :feature3 "TWO DIFFERENCE", :feature4 "no"}]
+      (is (= 2 (:distance (first (clj-knn/knn test-vector training-data 1))))))))
 
