@@ -1,13 +1,7 @@
-language: clojure
+os: linux
+jdk: openjdk8
+dist: trusty
 lein: 2.8.1
-jdk:
-  - openjdk8
-  - oraclejdk9
-
-matrix:
-  include:
-    - jdk: openjdk9
-      before_install:
-        - rm "${JAVA_HOME}/lib/security/cacerts"
-        - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
+group: stable
 script: lein test
+language: clojure
