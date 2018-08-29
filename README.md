@@ -1,4 +1,5 @@
 # clj-knn
+[![Build Status](https://travis-ci.org/emilyagras/clj-knn.svg?branch=master)](https://travis-ci.org/emilyagras/clj-knn)
 
 ![image](https://user-images.githubusercontent.com/8107614/44235589-56593800-a1aa-11e8-8048-d5908c59a825.png)
 
