@@ -55,3 +55,9 @@
                        :feature3 "TWO DIFFERENCE", :feature4 "no"}]
       (is (= 2 (:distance (first (clj-knn/knn test-vector training-data 1))))))))
 
+
+(deftest flatten-map-test
+  (testing "should flatten arbitrarily deeply nested maps"
+    (let [input {:a {:b {:c {:d [1 2]}}} :b {:c 2}}
+          expected-output {:a.b.c.d [1 2] :b.c 2}]
+      (is (= expected-output (clj-knn/flatten-map input))))))
