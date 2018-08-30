@@ -2,6 +2,8 @@
   (:require [clojure.set :as set])
   (:gen-class))
 
+(def ^:dynamic *opts*)
+
 (defn get-key
   [prefix key]
   (if (nil? prefix)
@@ -23,7 +25,14 @@
   https://gist.github.com/sudodoki/023d5f08c2f847b072b652687fdb27f2
 
   Clojure walk adds computation complexity that probably is unnecessary"
-  (clojure.walk/keywordize-keys (into {} (flatten-map-kvs map))))
+  (if (:flatten *opts*)
+    (clojure.walk/keywordize-keys (into {} (flatten-map-kvs map)))
+    map))
+
+(defn flatten-maps [maps]
+  (if (:flatten *opts*)
+    (map #(clojure.walk/keywordize-keys (into {} (flatten-map-kvs %))) maps)
+    maps))
 
 (defn hamming-distance
   [map1 map2]
@@ -44,5 +53,8 @@
   (map (partial tag-with-distance test-vector) training-data))
 
 (defn knn
-  [test-vector training-data k]
-  (take-k-neighbors k (rank-neighbors test-vector training-data)))
+  [test-vector training-data k & opts]
+  (binding [*opts* (first opts)]
+    (let [test-vector (flatten-map test-vector)
+          training-data (flatten-maps training-data)]
+      (take-k-neighbors k (rank-neighbors test-vector training-data)))))

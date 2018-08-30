@@ -1,5 +1,6 @@
 (ns clj-knn.core-test
   (:require [clojure.test :refer :all]
+            [bond.james :as bond]
             [clj-knn.core :as clj-knn]))
 
 (deftest hamming-distance-test
@@ -58,6 +59,20 @@
 
 (deftest flatten-map-test
   (testing "should flatten arbitrarily deeply nested maps"
-    (let [input {:a {:b {:c {:d [1 2]}}} :b {:c 2}}
-          expected-output {:a.b.c.d [1 2] :b.c 2}]
-      (is (= expected-output (clj-knn/flatten-map input))))))
+    (binding [clj-knn/*opts* {:flatten true}]
+      (let [input {:a {:b {:c {:d [1 2]}}} :b {:c 2}}
+            expected-output {:a.b.c.d [1 2] :b.c 2}]
+        (is (= expected-output (clj-knn/flatten-map input))))))
+  (testing "clj-knn should flatten if {:flatten true}"
+    (is (= [{:a.b 2 :distance 2}] (clj-knn/knn {:a 1} [{:a {:b 2}}] 1 {:flatten true}))))
+  (testing "clj-knn should not flatten if :flatten is nil}"
+    (is (= [{:a {:b 2} :distance 1}] (clj-knn/knn {:a 1} [{:a {:b 2}}] 1)))))
+
+(deftest flatten-maps-test
+  (binding [clj-knn/*opts* {:flatten true}]
+    (testing "should flatten lists of maps"
+      (let [input [{:a {:b 1}}
+                   {:c {:d 1}}]
+            expected-output [{:a.b 1}
+                             {:c.d 1}]]
+        (is (= expected-output (clj-knn/flatten-maps input)))))))
